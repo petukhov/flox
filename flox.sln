@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1704.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "flox", "flox.fsproj", "{786FB84F-F86A-4F59-A016-F5D26B29CBFF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{786FB84F-F86A-4F59-A016-F5D26B29CBFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{786FB84F-F86A-4F59-A016-F5D26B29CBFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{786FB84F-F86A-4F59-A016-F5D26B29CBFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{786FB84F-F86A-4F59-A016-F5D26B29CBFF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6EA8F184-A320-4EAF-80B2-BD47B39EFD87}
+	EndGlobalSection
+EndGlobal
