@@ -1,0 +1,2 @@
+﻿The contents of the file:
+Hello world!
