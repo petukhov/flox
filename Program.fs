@@ -15,24 +15,39 @@ let report line where message =
 let error line message =
     report line "" message
 
+let scanTokens source =
+    ["hello"; "world"]
+
+let run source =
+    let tokens = scanTokens source
+    for t in tokens do
+        printfn "%s" t
+
 let runFile pathStr =
-    printfn "Reading file: %s" pathStr
+    printfn "Reading source file: %s" pathStr
     let allText = readLines pathStr |> String.concat "\n"
-    printfn "%s" allText
+    //printfn "%s" allText
+    run allText
+    if State.hadError = true then
+        exit 65
 
 let runPrompt () =
-    printfn "Welcome to runPrompt"
+    printfn "Welcome to interactive mode!"
     let rec loop input =
         match input with
         | "" -> ()
         | _ -> 
-            printfn "Your input was: %s" input
-            loop (Console.ReadLine())
-    loop (Console.ReadLine())
+            //printfn "Your input was: %s" input
+            run input
+            State.hadError <- false
+            printf "> "
+            loop (Console.ReadLine ())
+    printf "> "
+    loop (Console.ReadLine ())
 
 //////////////////////////////////// Execution
 
-let args = Environment.GetCommandLineArgs()
+let args = Environment.GetCommandLineArgs ()
 
 if args.Length > 2 then
     printf "Usage: flox [script]"
