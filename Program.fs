@@ -45,12 +45,12 @@ let runPrompt () =
     printf "> "
     loop (Console.ReadLine ())
 
-//////////////////////////////////// Execution
+///////////////// Execution ///////////////////
 
 let args = Environment.GetCommandLineArgs ()
 
 if args.Length > 2 then
-    printf "Usage: flox [script]"
+    printfn "Usage: flox [script]"
     exit 64
 elif args.Length = 2 then
     runFile args.[1]

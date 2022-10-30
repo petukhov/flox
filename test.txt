@@ -1,2 +1,1 @@
-﻿The contents of the file:
-Hello world!
+﻿var language = "lox";
