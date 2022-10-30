@@ -1,7 +1,5 @@
 ﻿open System
 
-// For more information see https://aka.ms/fsharp-console-apps
-
 let readLines (filePath:string) = seq {
     use sr = new IO.StreamReader (filePath)
     while not sr.EndOfStream do
