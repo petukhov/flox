@@ -1,4 +1,6 @@
-﻿open System
+﻿module flox.Main
+
+open System
 
 let readLines (filePath:string) = seq {
     use sr = new IO.StreamReader (filePath)
@@ -6,7 +8,12 @@ let readLines (filePath:string) = seq {
         yield sr.ReadLine ()
 }
 
-let args = Environment.GetCommandLineArgs()
+let report line where message =
+    printf "[line %i] Error %s: %s" line where message
+    State.hadError <- true
+
+let error line message =
+    report line "" message
 
 let runFile pathStr =
     printfn "Reading file: %s" pathStr
@@ -15,14 +22,17 @@ let runFile pathStr =
 
 let runPrompt () =
     printfn "Welcome to runPrompt"
-    let rec processInput input =
+    let rec loop input =
         match input with
         | "" -> ()
         | _ -> 
             printfn "Your input was: %s" input
-            processInput (Console.ReadLine())
-    processInput (Console.ReadLine())
+            loop (Console.ReadLine())
+    loop (Console.ReadLine())
 
+//////////////////////////////////// Execution
+
+let args = Environment.GetCommandLineArgs()
 
 if args.Length > 2 then
     printf "Usage: flox [script]"
