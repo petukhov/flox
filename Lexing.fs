@@ -28,11 +28,10 @@ type Token =
     //override this.ToString() =
     //    string this.tokenType + " " + this.lexeme + " " + string this.literal
 
-//type LexerContext =
-//    { source: string
-//      start: int
-//      current: int
-//      line: int  }    
+let andEnsure mapping option =
+    match option with
+    | true -> mapping
+    | false -> false
 
 let scanTokens (source: string) =
     let mutable start = 0
@@ -40,8 +39,9 @@ let scanTokens (source: string) =
     let mutable line = 0
     let mutable tokens = []
 
+    let isAtEnd () = current >= String.length source
+
     let addToken (tokenType: TokenType) literal =
-        printfn "addToken start: %d current: %d" start current
         let text = source.[start..current - 1]
         let newToken = {
             tokenType = tokenType;
@@ -51,10 +51,16 @@ let scanTokens (source: string) =
         tokens <- newToken :: tokens
 
     let advance() =
-        //printf "%d" current
-        let res = (source |> Array.ofSeq).[current]
+        let res = source.[current]
         current <- current + 1
         res
+
+    let matchChar expected =
+        if not (isAtEnd ()) && source.[current] = expected
+        then
+            current <- current + 1
+            true
+        else false
 
     let scanToken () =
         let c = advance()
@@ -69,13 +75,17 @@ let scanTokens (source: string) =
         | '+' -> addToken PLUS None
         | ';' -> addToken SEMICOLON None
         | '*' -> addToken STAR None
+        | '!' -> addToken (if matchChar '=' then BANG_EQUAL else BANG) None
+        | '=' -> addToken (if matchChar '=' then EQUAL_EQUAL else EQUAL) None
+        | '<' -> addToken (if matchChar '=' then LESS_EQUAL else LESS) None
+        | '>' -> addToken (if matchChar '=' then GREATER_EQUAL else GREATER) None
         | _   ->
             // add proper printing to console here
             printfn "Unexpected error at %d" line
             State.hadError <- true
 
     //printfn "length is %d" (String.length source)
-    while current < String.length source do
+    while not (isAtEnd ()) do
         start <- current
         scanToken ()
     
