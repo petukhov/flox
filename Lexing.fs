@@ -50,7 +50,7 @@ let scanTokens (source: string) =
             line = line }
         tokens <- newToken :: tokens
 
-    let advance() =
+    let advance () =
         let res = source.[current]
         current <- current + 1
         res
@@ -62,8 +62,15 @@ let scanTokens (source: string) =
             true
         else false
 
+    let peek () =
+        if isAtEnd () then @"\0" else source.[current].ToString()
+
+    let advanceToLineEnd () =
+        while peek () <> "\n" && not (isAtEnd ()) do
+            advance () |> ignore
+
     let scanToken () =
-        let c = advance()
+        let c = advance ()
         match c with
         | '(' -> addToken LEFT_PAREN None
         | ')' -> addToken RIGHT_PAREN None
@@ -79,12 +86,12 @@ let scanTokens (source: string) =
         | '=' -> addToken (if matchChar '=' then EQUAL_EQUAL else EQUAL) None
         | '<' -> addToken (if matchChar '=' then LESS_EQUAL else LESS) None
         | '>' -> addToken (if matchChar '=' then GREATER_EQUAL else GREATER) None
+        | '/' -> if matchChar '/' then advanceToLineEnd () else addToken SLASH None
         | _   ->
             // add proper printing to console here
             printfn "Unexpected error at %d" line
             State.hadError <- true
 
-    //printfn "length is %d" (String.length source)
     while not (isAtEnd ()) do
         start <- current
         scanToken ()
