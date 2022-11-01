@@ -69,6 +69,20 @@ let scanTokens (source: string) =
         while peek () <> "\n" && not (isAtEnd ()) do
             advance () |> ignore
 
+    let string () =
+        while peek() <> "\"" && not (isAtEnd ()) do
+            if peek () = "\n" then line <- line + 1
+            advance () |> ignore
+
+        if isAtEnd ()
+            then
+                State.hadError <- true
+                printf "Unterminated string at line %d." line
+            else
+                advance () |> ignore
+                let value = source.[start + 1..current - 2]
+                addToken STRING value
+
     let scanToken () =
         let c = advance ()
         match c with
@@ -87,9 +101,12 @@ let scanTokens (source: string) =
         | '<' -> addToken (if matchChar '=' then LESS_EQUAL else LESS) None
         | '>' -> addToken (if matchChar '=' then GREATER_EQUAL else GREATER) None
         | '/' -> if matchChar '/' then advanceToLineEnd () else addToken SLASH None
+        | ' ' | '\r' | '\t' -> ()
+        | '\n' -> line <- line + 1
+        | '\"' -> string ()
         | _   ->
-            // add proper printing to console here
-            printfn "Unexpected error at %d" line
+            // TODO: Add proper printing to console here.
+            printfn "Unexpected error at line %d." line
             State.hadError <- true
 
     while not (isAtEnd ()) do
