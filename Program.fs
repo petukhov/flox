@@ -15,18 +15,14 @@ let report line where message =
 let error line message =
     report line "" message
 
-let scanTokens source =
-    ["hello"; "world"]
-
 let run source =
-    let tokens = scanTokens source
+    let tokens = Lexing.scanTokens source
     for t in tokens do
-        printfn "%s" t
+        printfn "%A" t
 
 let runFile pathStr =
     printfn "Reading source file: %s" pathStr
     let allText = readLines pathStr |> String.concat "\n"
-    //printfn "%s" allText
     run allText
     if State.hadError = true then
         exit 65
@@ -37,7 +33,6 @@ let runPrompt () =
         match input with
         | "" -> ()
         | _ -> 
-            //printfn "Your input was: %s" input
             run input
             State.hadError <- false
             printf "> "
