@@ -63,15 +63,15 @@ let scanTokens (source: string) =
         else false
 
     let peek () =
-        if isAtEnd () then @"\0" else source.[current].ToString()
+        if isAtEnd () then '\r' else source.[current]
 
     let advanceToLineEnd () =
-        while peek () <> "\n" && not (isAtEnd ()) do
+        while peek () <> '\n' && not (isAtEnd ()) do
             advance () |> ignore
 
     let string () =
-        while peek() <> "\"" && not (isAtEnd ()) do
-            if peek () = "\n" then line <- line + 1
+        while peek() <> '\"' && not (isAtEnd ()) do
+            if peek () = '\n' then line <- line + 1
             advance () |> ignore
 
         if isAtEnd ()
@@ -82,6 +82,24 @@ let scanTokens (source: string) =
                 advance () |> ignore
                 let value = source.[start + 1..current - 2]
                 addToken STRING value
+
+    let isDigit c = c >= '0' && c <= '9'
+
+
+    let number () =
+        //while (isDigit(peek())) advance();
+        
+        //    // Look for a fractional part.
+        //    if (peek() == '.' && isDigit(peekNext())) {
+        //      // Consume the "."
+        //      advance();
+        
+        //      while (isDigit(peek())) advance();
+        //    }
+        
+        //    addToken(NUMBER,
+        //        Double.parseDouble(source.substring(start, current)));
+        while isDigit (peek ()) do advance () |> ignore
 
     let scanToken () =
         let c = advance ()
