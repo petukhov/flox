@@ -9,6 +9,10 @@
     <Compile Include="State.fs" />
     <Compile Include="Lexing.fs" />
     <Compile Include="Program.fs" />
+    <Compile Include="Expr.fs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="grammar.txt" />
+  </ItemGroup>
 </Project>
