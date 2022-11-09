@@ -53,4 +53,3 @@ else
     runPrompt ()
 
 exit 0
-

@@ -18,7 +18,6 @@ type Expr =
     | Literal of value : obj option
     | Unary of operator: Token * right : Expr
 
-
 let internal createToken tokenType text literal line =
     {   tokenType = tokenType
         lexeme = text
