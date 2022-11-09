@@ -2,3 +2,4 @@
 (( )){} // grouping stuff
 !*+-/=<> <= == // operators
 () "hel lo" <> // string
+133423.23 <= >

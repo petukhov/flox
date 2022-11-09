@@ -1,5 +1,9 @@
 ﻿module internal flox.Lexing
 
+open System
+
+let END_FILE_CHAR = '\r'
+
 type TokenType =
     // Single-character tokens.
     |LEFT_PAREN |RIGHT_PAREN |LEFT_BRACE |RIGHT_BRACE
@@ -63,7 +67,7 @@ let scanTokens (source: string) =
         else false
 
     let peek () =
-        if isAtEnd () then '\r' else source.[current]
+        if isAtEnd () then END_FILE_CHAR else source.[current]
 
     let advanceToLineEnd () =
         while peek () <> '\n' && not (isAtEnd ()) do
@@ -85,21 +89,19 @@ let scanTokens (source: string) =
 
     let isDigit c = c >= '0' && c <= '9'
 
+    let peekNext () =
+        if current + 1 >= source.Length
+        then END_FILE_CHAR
+        else source.[current + 1]
 
     let number () =
-        //while (isDigit(peek())) advance();
-        
-        //    // Look for a fractional part.
-        //    if (peek() == '.' && isDigit(peekNext())) {
-        //      // Consume the "."
-        //      advance();
-        
-        //      while (isDigit(peek())) advance();
-        //    }
-        
-        //    addToken(NUMBER,
-        //        Double.parseDouble(source.substring(start, current)));
         while isDigit (peek ()) do advance () |> ignore
+
+        if peek() = '.' && isDigit(peekNext ()) then
+            advance () |> ignore
+            while isDigit (peek ()) do advance () |> ignore
+
+        addToken NUMBER (Double.Parse source.[start..current - 1])
 
     let scanToken () =
         let c = advance ()
@@ -123,9 +125,12 @@ let scanTokens (source: string) =
         | '\n' -> line <- line + 1
         | '\"' -> string ()
         | _   ->
-            // TODO: Add proper printing to console here.
-            printfn "Unexpected error at line %d." line
-            State.hadError <- true
+            if isDigit c
+            then number()
+            else
+                // TODO: Add proper printing to console here.
+                printfn "Unexpected error at line %d." line
+                State.hadError <- true
 
     while not (isAtEnd ()) do
         start <- current
