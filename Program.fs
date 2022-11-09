@@ -1,4 +1,9 @@
-﻿module flox.Main
+﻿// TODO:
+// 1. pass errors as a return value from lexer
+// 2. add unit testing
+// 3. add auto-formatting and linting
+
+module flox.Main
 
 open System
 
