@@ -30,7 +30,7 @@ type Token =
       literal: obj
       line: int }
 
-let keywordToToken = function
+let keywordToTokenType = function
     | "and"    -> AND
     | "class"  -> CLASS
     | "else"   -> ELSE
@@ -122,7 +122,7 @@ let scanTokens (source: string) =
     let identifier_ () =
         while isAlphaNumeric (peek ()) do advance_ () |> ignore;
         let text = source.[start .. current - 1]
-        addToken_ (keywordToToken text) None
+        addToken_ (keywordToTokenType text) None
     
     let scanToken_ () =
         let c = advance_ ()
