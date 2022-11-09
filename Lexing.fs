@@ -63,7 +63,7 @@ let scanTokens (source: string) =
 
     let isAtEnd () = current >= String.length source
 
-    let addToken (tokenType: TokenType) literal =
+    let addToken_ (tokenType: TokenType) literal =
         let text = source.[start..current - 1]
         let newToken = {
             tokenType = tokenType;
@@ -72,12 +72,12 @@ let scanTokens (source: string) =
             line = line }
         tokens <- newToken :: tokens
 
-    let advance () =
+    let advance_ () =
         let res = source.[current]
         current <- current + 1
         res
 
-    let matchChar expected =
+    let matchChar_ expected =
         if not (isAtEnd ()) && source.[current] = expected
         then
             current <- current + 1
@@ -87,67 +87,67 @@ let scanTokens (source: string) =
     let peek () =
         if isAtEnd () then END_FILE_CHAR else source.[current]
 
-    let advanceToLineEnd () =
+    let advanceToLineEnd_ () =
         while peek () <> '\n' && not (isAtEnd ()) do
-            advance () |> ignore
+            advance_ () |> ignore
 
-    let string () =
+    let string_ () =
         while peek () <> '\"' && not (isAtEnd ()) do
             if peek () = '\n' then line <- line + 1
-            advance () |> ignore
+            advance_ () |> ignore
 
         if isAtEnd ()
             then
                 State.hadError <- true
                 printf "Unterminated string at line %d." line
             else
-                advance () |> ignore
+                advance_ () |> ignore
                 let value = source.[start + 1..current - 2]
-                addToken STRING value
+                addToken_ STRING value
 
     let peekNext () =
         if current + 1 >= source.Length
         then END_FILE_CHAR
         else source.[current + 1]
 
-    let number () =
-        while isDigit (peek ()) do advance () |> ignore
+    let number_ () =
+        while isDigit (peek ()) do advance_ () |> ignore
 
         if peek() = '.' && isDigit (peekNext ()) then
-            advance () |> ignore
-            while isDigit (peek ()) do advance () |> ignore
+            advance_ () |> ignore
+            while isDigit (peek ()) do advance_ () |> ignore
 
-        addToken NUMBER (Double.Parse source.[start..current - 1])
+        addToken_ NUMBER (Double.Parse source.[start..current - 1])
 
-    let identifier () =
-        while isAlphaNumeric (peek ()) do advance () |> ignore;
+    let identifier_ () =
+        while isAlphaNumeric (peek ()) do advance_ () |> ignore;
         let text = source.[start .. current - 1]
-        addToken (keywordToToken text) None
+        addToken_ (keywordToToken text) None
     
-    let scanToken () =
-        let c = advance ()
+    let scanToken_ () =
+        let c = advance_ ()
         match c with
-        | '(' -> addToken LEFT_PAREN None
-        | ')' -> addToken RIGHT_PAREN None
-        | '{' -> addToken LEFT_BRACE None
-        | '}' -> addToken RIGHT_BRACE None
-        | ',' -> addToken COMMA None
-        | '.' -> addToken DOT None
-        | '-' -> addToken MINUS None
-        | '+' -> addToken PLUS None
-        | ';' -> addToken SEMICOLON None
-        | '*' -> addToken STAR None
-        | '!' -> addToken (if matchChar '=' then BANG_EQUAL else BANG) None
-        | '=' -> addToken (if matchChar '=' then EQUAL_EQUAL else EQUAL) None
-        | '<' -> addToken (if matchChar '=' then LESS_EQUAL else LESS) None
-        | '>' -> addToken (if matchChar '=' then GREATER_EQUAL else GREATER) None
-        | '/' -> if matchChar '/' then advanceToLineEnd () else addToken SLASH None
+        | '(' -> addToken_ LEFT_PAREN None
+        | ')' -> addToken_ RIGHT_PAREN None
+        | '{' -> addToken_ LEFT_BRACE None
+        | '}' -> addToken_ RIGHT_BRACE None
+        | ',' -> addToken_ COMMA None
+        | '.' -> addToken_ DOT None
+        | '-' -> addToken_ MINUS None
+        | '+' -> addToken_ PLUS None
+        | ';' -> addToken_ SEMICOLON None
+        | '*' -> addToken_ STAR None
+        | '!' -> addToken_ (if matchChar_ '=' then BANG_EQUAL else BANG) None
+        | '=' -> addToken_ (if matchChar_ '=' then EQUAL_EQUAL else EQUAL) None
+        | '<' -> addToken_ (if matchChar_ '=' then LESS_EQUAL else LESS) None
+        | '>' -> addToken_ (if matchChar_ '=' then GREATER_EQUAL else GREATER) None
+        | '/' -> if matchChar_ '/' then advanceToLineEnd_ () else addToken_ SLASH None
         | ' ' | '\r' | '\t' -> ()
         | '\n' -> line <- line + 1
-        | '\"' -> string ()
+        | '\"' -> string_ ()
         | _   ->
-            if isDigit c then number ()
-            elif isAlpha c then identifier ()
+            if isDigit c then number_ ()
+            elif isAlpha c then identifier_ ()
             else
                 // TODO: Add proper printing to console here.
                 printfn "Unexpected error at line %d." line
@@ -155,7 +155,7 @@ let scanTokens (source: string) =
 
     while not (isAtEnd ()) do
         start <- current
-        scanToken ()
+        scanToken_ ()
     
     List.rev tokens
     
