@@ -3,3 +3,5 @@
 !*+-/=<> <= == // operators
 () "hel lo" <> // string
 133423.23 <= >
+abc123 return
+print

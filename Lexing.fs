@@ -29,13 +29,31 @@ type Token =
       lexeme: string
       literal: obj
       line: int }
-    //override this.ToString() =
-    //    string this.tokenType + " " + this.lexeme + " " + string this.literal
 
-let andEnsure mapping option =
-    match option with
-    | true -> mapping
-    | false -> false
+let keywordToToken = function
+    | "and"    -> AND
+    | "class"  -> CLASS
+    | "else"   -> ELSE
+    | "false"  -> FALSE
+    | "for"    -> FOR
+    | "fun"    -> FUN
+    | "if"     -> IF
+    | "nil"    -> NIL
+    | "or"     -> OR
+    | "print"  -> PRINT
+    | "return" -> RETURN
+    | "super"  -> SUPER
+    | "this"   -> THIS
+    | "true"   -> TRUE
+    | "var"    -> VAR
+    | "while"  -> WHILE
+    | _        -> IDENTIFIER
+
+let isDigit c = c >= '0' && c <= '9'
+
+let isAlpha c = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c = '_'
+
+let isAlphaNumeric c = isAlpha c || isDigit c
 
 let scanTokens (source: string) =
     let mutable start = 0
@@ -74,7 +92,7 @@ let scanTokens (source: string) =
             advance () |> ignore
 
     let string () =
-        while peek() <> '\"' && not (isAtEnd ()) do
+        while peek () <> '\"' && not (isAtEnd ()) do
             if peek () = '\n' then line <- line + 1
             advance () |> ignore
 
@@ -87,8 +105,6 @@ let scanTokens (source: string) =
                 let value = source.[start + 1..current - 2]
                 addToken STRING value
 
-    let isDigit c = c >= '0' && c <= '9'
-
     let peekNext () =
         if current + 1 >= source.Length
         then END_FILE_CHAR
@@ -97,12 +113,17 @@ let scanTokens (source: string) =
     let number () =
         while isDigit (peek ()) do advance () |> ignore
 
-        if peek() = '.' && isDigit(peekNext ()) then
+        if peek() = '.' && isDigit (peekNext ()) then
             advance () |> ignore
             while isDigit (peek ()) do advance () |> ignore
 
         addToken NUMBER (Double.Parse source.[start..current - 1])
 
+    let identifier () =
+        while isAlphaNumeric (peek ()) do advance () |> ignore;
+        let text = source.[start .. current - 1]
+        addToken (keywordToToken text) None
+    
     let scanToken () =
         let c = advance ()
         match c with
@@ -125,8 +146,8 @@ let scanTokens (source: string) =
         | '\n' -> line <- line + 1
         | '\"' -> string ()
         | _   ->
-            if isDigit c
-            then number()
+            if isDigit c then number ()
+            elif isAlpha c then identifier ()
             else
                 // TODO: Add proper printing to console here.
                 printfn "Unexpected error at line %d." line
