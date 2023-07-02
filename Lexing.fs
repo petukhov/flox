@@ -1,4 +1,4 @@
-﻿module internal flox.Lexing
+﻿module flox.Lexing
 
 open System
 
@@ -151,11 +151,16 @@ let scanTokens (source: string) =
             else
                 // TODO: Add proper printing to console here.
                 printfn "Unexpected error at line %d." line
+                // refactor this. Remove the State module.
                 State.hadError <- true
 
     while not (isAtEnd ()) do
         start <- current
         scanToken_ ()
+
+    // fix this (lexeme is incorrect), remove List.rev as well.
+    addToken_ EOF None
+
     
-    List.rev tokens
+    Some (List.rev tokens)
     

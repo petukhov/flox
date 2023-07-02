@@ -1,6 +1,7 @@
-﻿module internal flox.Expr
+﻿module flox.Expr
 
 open flox.Lexing
+open flox.Parser
 
 //// This is coming from the book:
 
@@ -12,24 +13,24 @@ open flox.Lexing
 
 // Should be converted to this:
 
-type Expr =
-    | Binary of left : Expr * operator : Token * right : Expr
-    | Grouping of expression : Expr
-    | Literal of value : obj option
-    | Unary of operator: Token * right : Expr
+// type Expr =
+//     | Binary of left : Expr * operator : Token * right : Expr
+//     | Grouping of expression : Expr
+//     | Literal of value : obj option
+//     | Unary of operator: Token * right : Expr
 
-let internal createToken tokenType text literal line =
-    {   tokenType = tokenType
-        lexeme = text
-        literal = literal
-        line = line   }
+// let internal createToken tokenType text literal line =
+//     {   tokenType = tokenType
+//         lexeme = text
+//         literal = literal
+//         line = line   }
 
-let example = 
-    Binary(
-        Unary(createToken MINUS "-" None 1, Literal(Some(123 :> obj))),
-        createToken STAR "*" None 1,
-        Grouping(Literal(Some(45.67 :> obj)))
-    )
+// let example = 
+//     Binary(
+//         Unary(createToken MINUS "-" None 1, Literal(Some(123 :> obj))),
+//         createToken STAR "*" None 1,
+//         Grouping(Literal(Some(45.67 :> obj)))
+//     )
 
 let rec prettyPrint = function
     | Binary(left, operator, right) -> parenthesize operator.lexeme [left; right]
